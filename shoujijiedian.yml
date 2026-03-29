@@ -31,9 +31,6 @@ dns:
   nameserver:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
-  nameserver-policy:
-    '+.423down.com': 223.5.5.5
-    '+.rexuexia.com': 223.5.5.5
   proxy-server-nameserver:
     - https://1.1.1.1/dns-query
   fallback:
@@ -53,8 +50,6 @@ tun:
   auto-detect-interface: true
   dns-hijack:
     - any:53
-  exclude:
-    - 123  # 时间同步
 proxies:
   - name: 🇺🇸_美国_chatou_vless
     server: 104.18.42.163
