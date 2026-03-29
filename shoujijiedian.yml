@@ -1,0 +1,162 @@
+﻿port: 7890
+ipv6: false
+allow-lan: true
+unified-delay: true
+tcp-concurrent: true
+dns:
+  enable: true
+  ipv6: false
+  use-hosts: true
+  use-system-hosts: false
+  listen: 0.0.0.0:53
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - '*.lan'
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - '*.rexuexia.com'
+    - '*.msftncsi.com'
+    - 'dns.msftncsi.com'
+    - '*.msftncsi.com'
+    - 'dns.msftncsi.com'
+    - 'time.android.com'
+    - +.stun.playstation.net
+    - '*.msftconnecttest.com'
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  nameserver-policy:
+    '+.423down.com': 223.5.5.5
+    '+.rexuexia.com': 223.5.5.5
+  proxy-server-nameserver:
+    - https://1.1.1.1/dns-query
+  fallback:
+    - https://dns.google/dns-query
+    - https://dns.twnic.tw/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+tun:
+  enable: true
+  stack: system
+  auto-route: true
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+  exclude:
+    - 123  # 时间同步
+proxies:
+  - name: 🇺🇸_美国_chatou_vless
+    server: 104.18.42.163
+    port: 443
+    client-fingerprint: chrome
+    type: vless
+    uuid: fc09ecb6-af2d-41f8-af08-6b597bb436ef
+    tls: true
+    udp: false
+    skip-cert-verify: false
+    servername: powcan.chatou.ip-ddns.com
+    network: ws
+    ws-opts:
+      path: /?ed=2560
+      headers:
+        Host: powcan.chatou.ip-ddns.com
+proxy-groups:
+  - name: 🔰 节点选择
+    type: select
+    proxies:
+      - 🇺🇸_美国_chatou_vless
+      - DIRECT
+  - name: 🛑 全球拦截
+    type: select
+    proxies:
+      - REJECT
+rule-providers:
+  reject:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: ./ruleset/reject.yaml
+    interval: 86400
+  proxy:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: ./ruleset/proxy.yaml
+    interval: 86400
+  direct:
+    type: http
+    behavior: domain
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: ./ruleset/direct.yaml
+    interval: 86400
+rules:
+  - IP-CIDR,223.5.5.5/32,DIRECT,no-resolve
+  - IP-CIDR,119.29.29.29/32,DIRECT,no-resolve
+  - IP-CIDR,1.1.1.1/32,🔰 节点选择,no-resolve
+  - IP-CIDR,8.8.4.4/32,🔰 节点选择,no-resolve
+  - IP-CIDR,101.101.101.101/32,🔰 节点选择,no-resolve
+# 广告拦截
+  - RULE-SET,reject,🛑 全球拦截
+  - DOMAIN,sp1.baiducom,🛑 全球拦截
+  - DOMAIN,pcs.baidu.com,🛑 全球拦截
+  - DOMAIN,pv6.testipv6.cn,🛑 全球拦截
+  - DOMAIN-SUFFIX,361qq.cn,🛑 全球拦截
+  - DOMAIN-SUFFIX,ipip5.com,🛑 全球拦截
+  - DOMAIN-SUFFIX,360buyimg.com,🛑 全球拦截
+  - DOMAIN-SUFFIX,busuanzi.icodeq.com,🛑 全球拦截
+# 需要直连的域名
+  - DOMAIN,code.icoa.vip,DIRECT
+  - DOMAIN-SUFFIX,linux.do,DIRECT
+  - DOMAIN-SUFFIX,soso.com,DIRECT
+  - DOMAIN,time.amdroid.com,DIRECT
+  - DOMAIN-SUFFIX,tianqi.com,DIRECT
+  - DOMAIN-SUFFIX,codevian.com,DIRECT
+  - DOMAIN-SUFFIX,liteapks.com,DIRECT
+  - DOMAIN-SUFFIX,msftncsi.com,DIRECT
+  - DOMAIN-SUFFIX,rexuexia.com,DIRECT
+  - DOMAIN-SUFFIX,oceansaver.in,DIRECT
+  - DOMAIN-SUFFIX,whatsmydns.net,DIRECT
+  - DOMAIN-SUFFIX,scamalytics.com,DIRECT
+  - DOMAIN-SUFFIX,file.apkdone.io,DIRECT
+  - DOMAIN-SUFFIX,wangyoudanji.com,DIRECT
+  - DOMAIN-SUFFIX,tianqistatic.com,DIRECT
+  - DOMAIN-SUFFIX,xda-developers.com,DIRECT
+  - DOMAIN-SUFFIX,hybrid-analysis.com,DIRECT
+  # 藏宝湾
+  - DOMAIN-SUFFIX,iopq.com,DIRECT
+  - DOMAIN-SUFFIX,iopq.net,DIRECT
+  - DOMAIN,imgs.freeimg.cn,DIRECT
+  - DOMAIN-SUFFIX,laowb.com,DIRECT
+# 需要代理域名
+  - DOMAIN,dns.google,🔰 节点选择
+  - DOMAIN,dns.icoa.cn,🔰 节点选择
+  - DOMAIN,dns.twnic.tw,🔰 节点选择
+  - DOMAIN-SUFFIX,x.com,🔰 节点选择
+  - DOMAIN-SUFFIX,ai.com,🔰 节点选择
+  - DOMAIN,pincong.rocks,🔰 节点选择
+  - DOMAIN-SUFFIX,v2ex.com,🔰 节点选择
+  - DOMAIN-SUFFIX,yt2k.com,🔰 节点选择
+  - DOMAIN-SUFFIX,cfmem.com,🔰 节点选择
+  - DOMAIN-SUFFIX,google.com,🔰 节点选择
+  - DOMAIN-SUFFIX,youtube.com,🔰 节点选择
+  - DOMAIN-SUFFIX,dns.twnic.tw,🔰 节点选择
+  - DOMAIN-SUFFIX,kstore.space,🔰 节点选择
+  - DOMAIN-SUFFIX,9dmsgame.net,🔰 节点选择
+  - DOMAIN-SUFFIX,changanfc.com,🔰 节点选择
+  - DOMAIN-SUFFIX,grokipedia.com,🔰 节点选择
+  - DOMAIN-SUFFIX,grokusercontent.com,🔰 节点选择
+# 下面是标准定义
+  - RULE-SET,proxy,🔰 节点选择
+  - RULE-SET,direct,DIRECT
+  - MATCH,🔰 节点选择
